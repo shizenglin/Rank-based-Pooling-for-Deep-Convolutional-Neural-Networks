@@ -32,7 +32,7 @@ layer {
 
 select_num represents the t. RAP uses the parameter t to control how many activations are selected to be averaged. The value of t should not be too large or too small since t=1 corresponds to max-pooling, and t=n (pooling size) reduces to average-pooling. Optimal t may be different in different visual tasks, but we suggest that setting t at medium ranges (i.g., median value) may lead to satisfactory result.
 
-2. Rank-based Weighted Pooling (RWP)
+2.Rank-based Weighted Pooling (RWP)
 
 layer {
 
