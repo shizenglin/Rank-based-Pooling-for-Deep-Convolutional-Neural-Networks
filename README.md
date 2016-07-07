@@ -1,34 +1,45 @@
-# Caffe
+# Rank-based-Pooling-for-Deep-Convolutional-Neural-Networks
 
-Caffe is a deep learning framework made with expression, speed, and modularity in mind.
-It is developed by the Berkeley Vision and Learning Center ([BVLC](http://bvlc.eecs.berkeley.edu)) and community contributors.
+A novel pooling mechanism called rank-based pooling is proposed. We consider rank-based pooling as an instance of weighted pooling where a weighted sum of activations is used to generate the pooling output. Three new pooling methods, rank-based average pooling (RAP), rank-based weighted pooling (RWP) and rank-based stochastic pooling (RSP), are introduced according to different weighting strategies. RAP can be regarded as a tradeoff between max pooling and average pooling. A rank threshold t is used to eliminate some near-zero activations. The weights of those selected activations are set to be 1/t while others are kept as 0. In RWP, each activation is weighted by a coefficient in range of (0,1) computed based on its rank, and more important activations have larger weights. RSP replaces the conventional deterministic pooling operations with a stochastic procedure. A multinomial distribution is created from the probabilities p based on the ranks. The weights of the activations can be got by sampling from this distribution.
 
-Check out the [project site](http://caffe.berkeleyvision.org) for all the details like
-
-- [DIY Deep Learning for Vision with Caffe](https://docs.google.com/presentation/d/1UeKXVgRvvxg9OUdh_UiC5G71UMscNPlvArsWER41PsU/edit#slide=id.p)
-- [Tutorial Documentation](http://caffe.berkeleyvision.org/tutorial/)
-- [BVLC reference models](http://caffe.berkeleyvision.org/model_zoo.html) and the [community model zoo](https://github.com/BVLC/caffe/wiki/Model-Zoo)
-- [Installation instructions](http://caffe.berkeleyvision.org/installation.html)
-
-and step-by-step examples.
-
-[![Join the chat at https://gitter.im/BVLC/caffe](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/BVLC/caffe?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-
-Please join the [caffe-users group](https://groups.google.com/forum/#!forum/caffe-users) or [gitter chat](https://gitter.im/BVLC/caffe) to ask questions and talk about methods and models.
-Framework development discussions and thorough bug reports are collected on [Issues](https://github.com/BVLC/caffe/issues).
-
-Happy brewing!
-
-## License and Citation
-
-Caffe is released under the [BSD 2-Clause license](https://github.com/BVLC/caffe/blob/master/LICENSE).
-The BVLC reference models are released for unrestricted use.
-
-Please cite Caffe in your publications if it helps your research:
-
-    @article{jia2014caffe,
-      Author = {Jia, Yangqing and Shelhamer, Evan and Donahue, Jeff and Karayev, Sergey and Long, Jonathan and Girshick, Ross and Guadarrama, Sergio and Darrell, Trevor},
-      Journal = {arXiv preprint arXiv:1408.5093},
-      Title = {Caffe: Convolutional Architecture for Fast Feature Embedding},
-      Year = {2014}
-    }
+1.Rank-Based Average Pooling (RAP)
+layer {
+  name: "pool1"
+  type: "Pooling"
+  bottom: "conv1"
+  top: "pool1"
+  pooling_param {
+    pool: RANKAVE
+    kernel_size: 3
+    stride: 2
+    select_num: 8 
+  }
+}
+select_num represents the t. RAP uses the parameter t to control how many activations are selected to be averaged. The value of t should not be too large or too small since t=1 corresponds to max-pooling, and t=n (pooling size) reduces to average-pooling. Optimal t may be different in different visual tasks, but we suggest that setting t at medium ranges (i.g., median value) may lead to satisfactory result.
+2. Rank-based Weighted Pooling (RWP)
+layer {
+  name: "pool1"
+  type: "Pooling"
+  bottom: "conv1"
+  top: "pool1"
+  pooling_param {
+    pool: RANKWEIGHTING
+    kernel_size: 3
+    stride: 2
+    p_a: 0.5
+  }
+}
+3.Rank-based Stochastic Pooling (RSP)
+layer {
+  name: "pool1"
+  type: "Pooling"
+  bottom: "conv1"
+  top: "pool1"
+  pooling_param {
+    pool: RANKSTOCHASTIC
+    kernel_size: 3
+    stride: 2
+    p_a: 0.5
+  }
+}
+In RWP and RSP, we introduce a new hyper-parameter a(p_a). It controls the probability of the maximum activation in a pooling region. We argue that setting it to be around 0.5 may lead to satisfactory performance.
