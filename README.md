@@ -43,3 +43,5 @@ layer {
   }
 }
 In RWP and RSP, we introduce a new hyper-parameter a(p_a). It controls the probability of the maximum activation in a pooling region. We argue that setting it to be around 0.5 may lead to satisfactory performance.
+
+We evaluate the proposed methods on four benchmark datasets: MNIST, CIFAR-10, CIFAR-100 and NORB. All experiments are conducted by using a deep learning framework called Caffe.
