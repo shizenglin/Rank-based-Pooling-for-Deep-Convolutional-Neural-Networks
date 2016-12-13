@@ -93,6 +93,7 @@ In order to use the rank-based pooling in your caffe, some files need to be modi
 1. caffe.proto
 
 In message PoolingParameter, adding 
+
 enum PoolMethod {
     MAX = 0;
     AVE = 1;
@@ -108,12 +109,16 @@ enum PoolMethod {
   optional uint32 select_num = 14 [default = 5];
   
 2. vision_layers.hpp
+
 In PoolingLayer, adding
+
 float p_a;
 int select_num;
 
 3. pooling_layer.cpp
+
 In LayerSetUp, adding
+
 if (this->layer_param_.pooling_param().pool() ==
       PoolingParameter_PoolMethod_RANKSTOCHASTIC) {
       p_a=pool_param.p_a();
@@ -126,6 +131,8 @@ if (this->layer_param_.pooling_param().pool() ==
       PoolingParameter_PoolMethod_RANKAVE) {
       select_num=pool_param.select_num();
   }
+  
 4. pooling_layer.cu
+
 You can directly copy my pooling_layer.cu.
 
