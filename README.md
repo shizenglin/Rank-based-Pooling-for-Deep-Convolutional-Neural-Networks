@@ -90,49 +90,71 @@ We evaluate the proposed methods on four benchmark datasets: MNIST, CIFAR-10, CI
 
 In order to use the rank-based pooling in your caffe, some files need to be modified.
 
-1. caffe.proto
+1.caffe.proto
 
 In message PoolingParameter, adding 
 
 enum PoolMethod {
+
     MAX = 0;
+    
     AVE = 1;
+    
     STOCHASTIC = 2;
+    
     RANKSTOCHASTIC = 3;
+    
     EXPSTOCHASTIC = 4;
+    
     VALUEWEIGHTING = 5;
+    
     RANKWEIGHTING = 6;
+    
     RANKAVE = 7;
+    
   }
   
-  optional float p_a = 13 [default = 0.5];
-  optional uint32 select_num = 14 [default = 5];
+ optional float p_a = 13 [default = 0.5];
   
-2. vision_layers.hpp
+ optional uint32 select_num = 14 [default = 5];
+  
+2.vision_layers.hpp
 
 In PoolingLayer, adding
 
 float p_a;
+
 int select_num;
 
-3. pooling_layer.cpp
+3.pooling_layer.cpp
 
 In LayerSetUp, adding
 
 if (this->layer_param_.pooling_param().pool() ==
+
       PoolingParameter_PoolMethod_RANKSTOCHASTIC) {
+      
       p_a=pool_param.p_a();
-  }
-  if (this->layer_param_.pooling_param().pool() ==
-      PoolingParameter_PoolMethod_RANKWEIGHTING) {
-      p_a=pool_param.p_a();
-  }
-  if (this->layer_param_.pooling_param().pool() ==
-      PoolingParameter_PoolMethod_RANKAVE) {
-      select_num=pool_param.select_num();
+      
   }
   
-4. pooling_layer.cu
+  if (this->layer_param_.pooling_param().pool() ==
+  
+      PoolingParameter_PoolMethod_RANKWEIGHTING) {
+      
+      p_a=pool_param.p_a();
+      
+  }
+  
+  if (this->layer_param_.pooling_param().pool() ==
+  
+      PoolingParameter_PoolMethod_RANKAVE) {
+      
+      select_num=pool_param.select_num();
+      
+  }
+  
+4.pooling_layer.cu
 
 You can directly copy my pooling_layer.cu.
 
